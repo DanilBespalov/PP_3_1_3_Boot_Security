@@ -10,8 +10,8 @@
 
 <form
         th:method="POST" th:action="@{/users}" th:object="${user}">
-  <label for="name">Enter name:</label>
-  <input type="text" th:field="*{name}" id="name">
+  <label for="role_name">Enter role_name:</label>
+  <input type="text" th:field="*{role_name}" id="role_name">
   <br><br>
   <label for="surname">Enter surname:</label>
   <input type="text" th:field="*{surname}" id="surname">

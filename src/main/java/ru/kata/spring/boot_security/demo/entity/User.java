@@ -5,9 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -15,6 +18,9 @@ import java.util.List;
 public class User {
 
     @ManyToMany
+    @JoinTable(name = "roles",
+            joinColumns = @JoinColumn (name = "id"),
+            inverseJoinColumns = @JoinColumn (name = "role_id"))
     private List<Roles> roles;
 
     @Id
