@@ -13,13 +13,16 @@ public class UserDetailsClass implements UserDetails {
         this.user = user;
     }
 
+    // возвращает коллекцию ролей у конкретного юзера
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return user.getRoles();
     }
 
     @Override
     public String getPassword() {
+
         return user.getPassword();
     }
 
@@ -48,4 +51,8 @@ public class UserDetailsClass implements UserDetails {
         return true;
     }
 
+    // для получения данных аутентифицированного пользователя
+    public User getUser() {
+        return user;
+    }
 }
