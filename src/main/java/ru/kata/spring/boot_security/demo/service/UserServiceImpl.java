@@ -14,6 +14,7 @@ import ru.kata.spring.boot_security.demo.security.UserDetailsClass;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,14 @@ public class UserServiceImpl implements UserDetailsService {
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findUserByName(username);
+    }
+
+    public Optional<User> findByUserID(Integer userID) {
+        return userRepository.findById(userID);
+    }
+
+    public Set<User> allUsers() {
+        return (Set<User>) userRepository.findAll();
     }
 
     @Override

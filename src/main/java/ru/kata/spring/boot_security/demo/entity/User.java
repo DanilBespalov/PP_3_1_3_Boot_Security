@@ -35,7 +35,7 @@ public class User {
     @Size(min = 2, message = "Введите не менее 2 знаков")
     private String name;
     @Column(name = "surname")
-    @NotEmpty(message = "Фамилия не должна быть пустым")
+    @NotEmpty(message = "Фамилия не должна быть пустой")
     @Size(min = 2, message = "Введите не менее 2 знаков")
     private String surname;
 
