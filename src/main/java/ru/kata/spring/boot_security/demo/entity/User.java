@@ -1,5 +1,8 @@
 package ru.kata.spring.boot_security.demo.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,13 +16,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "User")
-public class User {
+@Table(name = "users")
+public class User implements UserDetails {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "roles",
             joinColumns = @JoinColumn (name = "id"),
             inverseJoinColumns = @JoinColumn (name = "role_id"))
@@ -28,9 +32,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @NotEmpty(message = "Имя не должно быть пустым")
     @Size(min = 2, message = "Введите не менее 2 знаков")
     private String name;
@@ -45,15 +49,14 @@ public class User {
     public User() {
     }
 
-    public User(int id, String name, String surname) {
-        this.id = id;
+    public User(Set<Roles> roles, String name, String surname, String password) {
+        this.roles = roles;
         this.name = name;
         this.surname = surname;
+        this.password = password;
     }
 
-
-
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -77,10 +80,6 @@ public class User {
         this.surname = surname;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -93,13 +92,57 @@ public class User {
         this.roles = roles;
     }
 
+    // возвращает коллекцию ролей у конкретного юзера
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return roles;
+    }
+
+    @Override
+    public String getPassword() {
+
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return name;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    // для получения данных аутентифицированного пользователя
+//    public User getUser() {
+//        return user;
+//    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "roles=" + roles +
+                ", id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
-
 }
