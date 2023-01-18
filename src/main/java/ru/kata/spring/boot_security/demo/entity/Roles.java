@@ -19,45 +19,28 @@ import java.util.Set;
 public class Roles implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    private long role_id;
-    @Column(name = "role_name", unique = true)
-    private String role_name;
-
-    @Transient
-    @ManyToMany(mappedBy = "ROLES")
-    private Set<User> userSet;
+    private long id;
+    @Column(name = "role", unique = true)
+    private String role;
 
     public Roles() {
     }
 
-    public Roles(String role_name, Set<User> userSet) {
-        this.role_name = role_name;
-        this.userSet = userSet;
+    public Roles(String role) {
+        this.role = role;
+
     }
 
-    public String getRole_name() {
-        return role_name;
+    public String getRole() {
+        return role;
     }
 
-    public void setRole_name(String role_name) {
-        this.role_name = role_name;
-    }
-
-    public Set<User> getUserSet() {
-        return userSet;
-    }
-
-    public void setUserSet(Set<User> userSet) {
-        this.userSet = userSet;
+    public void setRole_name(String role) {
+        this.role = role;
     }
 
     @Override
     public String getAuthority() {
-        return this.role_name;
-    }
-
-    public Set<User> getUser() {
-        return userSet;
+        return this.role;
     }
 }
