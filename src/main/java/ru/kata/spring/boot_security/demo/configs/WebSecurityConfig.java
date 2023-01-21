@@ -4,22 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private UserServiceImpl userService;
-    @Autowired
-    public void setUserService(UserServiceImpl userService) {
-        this.userService = userService;
-    }
 
     private final SuccessUserHandler successUserHandler;
 
@@ -28,21 +22,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    // настроивает аутентификацию
+    // настраивает аутентификацию
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                // доступ всем, кто зашел на страницу
                 .antMatchers("/", "/index").permitAll()
+                // доступ для админки
                 .antMatchers("/admin").hasAnyRole("ADMIN", "USER")
+                // доступ для пользователя
                 .antMatchers("/users").hasRole("USER")
+                // все остальные страницы требуют аутентификации
                 .anyRequest().authenticated()
                 .and()
+                // форма входа, перенаправление на главную страницу после успешной авторизации
                 .formLogin().successHandler(successUserHandler)
                 .permitAll()
                 .and()
+                // форма выхода, перенаправление на главную страницу
                 .logout().logoutSuccessUrl("/")
                 .permitAll();
+    }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
 //    // аутентификация inMemory
@@ -77,7 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userService);
+//        daoAuthenticationProvider.setUserDetailsService();
         return daoAuthenticationProvider;
     }
 

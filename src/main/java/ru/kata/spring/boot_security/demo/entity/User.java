@@ -19,13 +19,14 @@ import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "roles",
-            joinColumns = @JoinColumn (name = "id"),
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn (name = "user_id"),
             inverseJoinColumns = @JoinColumn (name = "role_id"))
     private Set<Roles> roles;
 
@@ -36,7 +37,7 @@ public class User implements UserDetails {
     @Column(name = "name", unique = true)
     @NotEmpty(message = "Имя не должно быть пустым")
     @Size(min = 2, message = "Введите не менее 2 знаков")
-    private String name;
+    private String username;
     @Column(name = "surname")
     @NotEmpty(message = "Фамилия не должна быть пустой")
     @Size(min = 2, message = "Введите не менее 2 знаков")
@@ -45,14 +46,28 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     public User() {
     }
 
-    public User(Set<Roles> roles, String name, String surname, String password) {
-        this.roles = roles;
-        this.name = name;
+    public User(String username, String surname, String password, String email, Set<Roles> roles) {
+
+        this.username = username;
         this.surname = surname;
         this.password = password;
+        this.email = email;
+        this.roles = roles;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public long getId() {
@@ -64,11 +79,11 @@ public class User implements UserDetails {
     }
 
     public String getName() {
-        return name;
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String username) {
+        this.username = username;
     }
 
     public String getSurname() {
@@ -106,7 +121,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override
@@ -134,14 +149,16 @@ public class User implements UserDetails {
 //        return user;
 //    }
 
+
     @Override
     public String toString() {
         return "User{" +
                 "roles=" + roles +
                 ", id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + username + '\'' +
                 ", surname='" + surname + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
